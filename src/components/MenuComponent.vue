@@ -15,6 +15,10 @@
           <div class="bar bar-cross"></div>
         </div>
       </div>
+      <div class="wrapper_search" :class="{ 'wrapper_search_show': menuOpen }">
+        <img src="../assets/SearchCopy.svg" alt="Логотип" />
+        <p>Москва и область</p>
+      </div>
       <div
         class="notification-box"
         :class="{ 'notification-visible': notificationVisible }"
@@ -32,26 +36,31 @@
     </header>
     <nav class="menu" :class="{ 'menu-open': menuOpen }">
       <ul>
-        <li><a href="#">Преимущества Теle2</a></li>
-        <li><a href="#">Тарифы</a></li>
-        <li><a href="#">Акции и спецпредложения</a></li>
-        <li><a href="#">Промотариф Tele2</a></li>
-        <li><a href="#">Технология eSIM</a></li>
-        <li><a href="#">Подключение нового абонента</a></li>
+        <li v-for="menuItem in menuItems" :key="menuItem.id">
+          <a :href="menuItem.link">{{ menuItem.text }}</a>
+        </li>
       </ul>
     </nav>
   </div>
 </template>
 
 <script>
+
+import { useMenuStore } from '@/store'
+import { computed } from 'vue'
+
+
 export default {
   name: "MenuComponent",
   data() {
     return {
       menuOpen: false,
       notificationVisible: false,
+      menuStore: useMenuStore(),
+      menuItems: computed(() => this.menuStore.menuItems),
     };
   },
+
   mounted() {
     // Показать колокольчик на больших экранах
     if (window.innerWidth > 375) {
@@ -82,7 +91,7 @@ export default {
       const bell = document.querySelector(".notification-bell");
       bell.style.animation = "none";
 
-      // Убрать буллит 
+      // Убрать буллит
       const bellMiddle = document.querySelector(".bell-middle");
       while (bellMiddle.firstChild) {
         bellMiddle.removeChild(bellMiddle.firstChild);
@@ -123,6 +132,15 @@ header {
 .logo img {
   width: 48px;
   height: 18px;
+}
+
+.wrapper_search {
+  display: flex;
+  margin-right: 103px;
+  color: #7c8792;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
 }
 
 .burger-icon,
@@ -187,6 +205,14 @@ header {
 }
 
 @media (max-width: 376px) {
+  .wrapper_search {
+    display: none;
+    position: absolute;
+    top: 340px;
+  }
+  .wrapper_search_show {
+    display: flex;
+  }
   .menu-toggle {
     display: flex;
     align-items: center;
